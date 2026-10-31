@@ -113,7 +113,9 @@
   .scen { padding:10px 12px; border-radius:12px; border:1px solid var(--line); margin-top:8px; }
   .scen.now { border-color:var(--blue); background:var(--blue-bg); }
   .scen-h { display:flex; justify-content:space-between; align-items:center; font-size:.85rem; }
-  .scen-v { font-size:.8rem; font-weight:700; font-feature-settings:"tnum"; }
+  .scen-t { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:.85rem; margin-top:2px; }
+  .scen-t span { display:inline-flex; align-items:center; gap:5px; }
+  .scen-v { font-size:.72rem; margin-top:4px; }
   .legend { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:.75rem; color:var(--muted); }
   .legend span { display:inline-flex; align-items:center; gap:5px; }
 
@@ -175,8 +177,9 @@
       <div class="lab"><span>Hybrid内の比率（旧 : 新）</span><b id="newShareOut"></b></div>
       <input type="range" id="newShare" min="0" max="100" step="5">
     </div>
+    <h3>銘柄ごとの目標配分（今日のシグナル）</h3>
     <div id="scenarios"></div>
-    <div class="legend" style="margin-top:8px"><span><span class="sw" style="background:var(--c-SOXL)"></span>SOXL</span><span><span class="sw" style="background:var(--blue)"></span>旧Hybrid</span><span><span class="sw" style="background:#06b6d4"></span>新Hybrid</span></div>
+
   </section>
 
   <section class="card">
@@ -461,11 +464,17 @@ function compute() {
   ].filter((x) => x.f != null) : [{ k: "SOXL なし", f: 0, d: "" }];
   const nowIdx = soxlOn ? scen.findIndex((x) => Math.abs(x.f - fracNow) < 1e-9) : 0;
   $("scenarios").innerHTML = scen.map((x, i) => {
-    const sw_ = base * x.f, o = (1 - sw_) * (1 - newShare), nw = (1 - sw_) * newShare;
+    const sr = base * x.f;
+    const [o, nw] = apportion(sr, newShare);
+    const w = combinedWeights(o, nw);
+    if (soxlOn) w.SOXL = sr;
+    w.CASH = Math.max(0, 1 - Object.values(w).reduce((a, b) => a + b, 0));
+    const parts = [...TICKERS, "CASH"].filter((t) => (w[t] || 0) > 0.0005).map((t) => ({ t, w: w[t] }));
     return `<div class="scen${i === nowIdx ? " now" : ""}">
       <div class="scen-h"><span><b>${x.k}</b> <span class="muted">${x.d}</span></span>${i === nowIdx ? '<span class="pill b">いま</span>' : ""}</div>
-      <div class="alloc-bar">${barHTML([{ l: "SOXL", w: sw_, c: color("SOXL") }, { l: "旧Hybrid", w: o, c: "var(--blue)" }, { l: "新Hybrid", w: nw, c: "#06b6d4" }])}</div>
-      <div class="scen-v">${soxlOn ? `SOXL ${pct(sw_, 1)} ／ ` : ""}旧 ${pct(o, 1)} ／ 新 ${pct(nw, 1)}</div></div>`;
+      <div class="alloc-bar">${barHTML(parts.map((p) => ({ l: p.t, w: p.w, c: color(p.t) })))}</div>
+      <div class="scen-t">${parts.map((p) => `<span>${sw(p.t)}${p.t === "CASH" ? "現金" : p.t} <b>${pct(p.w, 1)}</b></span>`).join("")}</div>
+      <div class="scen-v muted">${soxlOn ? `SOXL ${pct(sr, 1)} ／ ` : ""}旧Hybrid ${pct(o, 1)} ／ 新Hybrid ${pct(nw, 1)}</div></div>`;
   }).join("");
   $("priceNote").textContent = `価格の初期値は ${SIG.price_date} の終値です。発注前に現在値へ書き換えると正確になります。`;
 
