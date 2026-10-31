@@ -2,85 +2,199 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b1220">
 <title>Hybrid Signals</title>
 <style>
-  :root { --bg:#f6f8fa; --card:#fff; --text:#1f2328; --muted:#6b7280; --line:#e5e7eb;
-          --ok:#15803d; --ng:#b91c1c; --warn:#b45309; --accent:#0e7490; --buy:#15803d; --sell:#b91c1c; }
+  :root {
+    --bg:#f3f5f9; --card:#ffffff; --card2:#f8fafc; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
+    --green:#16a34a; --green-bg:#dcfce7; --red:#dc2626; --red-bg:#fee2e2; --amber:#d97706; --amber-bg:#fef3c7;
+    --blue:#2563eb; --blue-bg:#dbeafe; --gray-bg:#f1f5f9;
+    --c-TQQQ:#3b82f6; --c-GLDM:#eab308; --c-DGP:#f59e0b; --c-SHNY:#fde047; --c-SOXL:#a855f7; --c-CASH:#94a3b8;
+    --shadow:0 1px 2px rgba(15,23,42,.04), 0 4px 16px rgba(15,23,42,.06);
+  }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#0d1117; --card:#161b22; --text:#e6edf3; --muted:#8b949e; --line:#30363d;
-            --ok:#4ade80; --ng:#f87171; --warn:#fbbf24; --accent:#22d3ee; --buy:#4ade80; --sell:#f87171; }
+    :root {
+      --bg:#0b1220; --card:#121a2b; --card2:#0f1626; --text:#e2e8f0; --muted:#8a9bb5; --line:#22304a;
+      --green:#4ade80; --green-bg:rgba(74,222,128,.12); --red:#f87171; --red-bg:rgba(248,113,113,.12);
+      --amber:#fbbf24; --amber-bg:rgba(251,191,36,.12); --blue:#60a5fa; --blue-bg:rgba(96,165,250,.12); --gray-bg:rgba(148,163,184,.1);
+      --shadow:none;
+    }
   }
   * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--text);
-         font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif; line-height:1.5; }
-  main { max-width:760px; margin:0 auto; padding:16px; }
-  h1 { font-size:1.4rem; margin:8px 0 4px; }
-  h2 { font-size:1.15rem; margin:0 0 12px; }
-  h3 { font-size:1rem; margin:16px 0 6px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin:14px 0; }
-  .muted { color:var(--muted); font-size:.85rem; }
-  .row { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:3px 0; }
-  .row .v { font-weight:600; text-align:right; }
-  .big { font-size:1.1rem; font-weight:700; }
-  .ok { color:var(--ok); } .ng { color:var(--ng); } .warn { color:var(--warn); }
-  .badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:.8rem; font-weight:700; border:1px solid currentColor; }
-  details summary { cursor:pointer; color:var(--muted); font-size:.9rem; margin-top:6px; }
-  table { width:100%; border-collapse:collapse; font-size:.92rem; }
-  th, td { padding:6px 4px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
-  th:first-child, td:first-child { text-align:left; }
-  th { color:var(--muted); font-weight:600; font-size:.8rem; }
-  label { display:block; font-size:.85rem; color:var(--muted); margin-bottom:2px; }
-  input[type=number] { width:100%; padding:8px; font-size:16px; border:1px solid var(--line); border-radius:8px;
-                       background:var(--bg); color:var(--text); }
-  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:10px; }
-  .switch { display:flex; align-items:center; gap:8px; font-size:.95rem; margin:4px 0 10px; }
-  .switch input { width:20px; height:20px; }
-  button { padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-size:.9rem; }
-  .alert { border-left:4px solid var(--warn); padding:8px 10px; background:rgba(180,83,9,.08); border-radius:6px; margin:8px 0; font-size:.9rem; }
-  .act-buy { color:var(--buy); font-weight:700; } .act-sell { color:var(--sell); font-weight:700; }
-  footer { font-size:.78rem; color:var(--muted); margin:24px 0 40px; }
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; background:var(--bg); color:var(--text); line-height:1.5;
+         font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+         font-feature-settings:"tnum"; }
+  main { max-width:820px; margin:0 auto; padding:max(16px, env(safe-area-inset-top)) 14px 40px; }
+
+  header { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin:6px 2px 14px; }
+  header h1 { margin:0; font-size:1.5rem; letter-spacing:-.02em; }
+  header .sub { color:var(--muted); font-size:.82rem; }
+  .fresh { font-size:.75rem; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap; }
+  .fresh.ok { color:var(--green); background:var(--green-bg); } .fresh.stale { color:var(--amber); background:var(--amber-bg); }
+
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px; margin:12px 0; box-shadow:var(--shadow); }
+  .card-h { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; }
+  .card-h h2 { margin:0; font-size:1.08rem; }
+  .card-h .date { color:var(--muted); font-size:.75rem; }
+  h3 { font-size:.8rem; color:var(--muted); font-weight:700; letter-spacing:.04em; margin:16px 0 8px; }
+  .muted { color:var(--muted); font-size:.8rem; }
+
+  /* サマリー */
+  .summary { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .tile { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px; box-shadow:var(--shadow); min-width:0; }
+  .tile .k { font-size:.72rem; color:var(--muted); font-weight:700; }
+  .tile .v { font-size:1.02rem; font-weight:800; margin-top:4px; line-height:1.3; }
+  .tile .s { font-size:.72rem; color:var(--muted); margin-top:2px; }
+  @media (max-width:420px) { .tile .v { font-size:.92rem; } }
+  .action { display:flex; gap:12px; align-items:flex-start; border-radius:16px; padding:14px 16px; margin:12px 0; font-size:.92rem; }
+  .action .ic { font-size:1.3rem; line-height:1; }
+  .action.buy { background:var(--green-bg); } .action.sell { background:var(--red-bg); } .action.err { background:var(--amber-bg); }
+  .action b { display:block; font-size:1rem; }
+
+  /* ピル */
+  .pill { display:inline-flex; align-items:center; gap:4px; font-size:.75rem; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap; }
+  .pill.g { color:var(--green); background:var(--green-bg); } .pill.r { color:var(--red); background:var(--red-bg); }
+  .pill.a { color:var(--amber); background:var(--amber-bg); } .pill.b { color:var(--blue); background:var(--blue-bg); }
+  .pill.n { color:var(--muted); background:var(--gray-bg); }
+
+  /* 指標 */
+  .metric { padding:10px 0; border-top:1px solid var(--line); }
+  .metric:first-of-type { border-top:none; }
+  .metric .top { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+  .metric .lab { font-size:.88rem; }
+  .metric .val { font-weight:800; font-size:1rem; white-space:nowrap; }
+  .metric .note { font-size:.75rem; color:var(--muted); margin-top:2px; }
+  .gauge { position:relative; height:8px; background:var(--gray-bg); border-radius:999px; margin:8px 0 2px; overflow:visible; }
+  .gauge .fill { position:absolute; left:0; top:0; bottom:0; border-radius:999px; }
+  .gauge .mark { position:absolute; top:-4px; bottom:-4px; width:2px; background:var(--muted); opacity:.6; border-radius:1px; }
+  .gauge .dot { position:absolute; top:50%; width:14px; height:14px; margin:-7px 0 0 -7px; border-radius:50%; border:3px solid var(--card); box-shadow:0 0 0 1px var(--line); }
+  .gscale { display:flex; justify-content:space-between; font-size:.68rem; color:var(--muted); position:relative; height:14px; }
+  .gscale span { position:absolute; white-space:nowrap; }
+
+  .state-row { display:flex; justify-content:space-between; align-items:center; gap:10px; margin:4px 0 6px; }
+  .state-row .name { font-weight:700; }
+  .state-big { font-size:1.05rem; font-weight:800; }
+  .split { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:560px) { .split { grid-template-columns:1fr; } }
+  .sub-card { background:var(--card2); border:1px solid var(--line); border-radius:14px; padding:12px 14px; }
+
+  .conds { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .cond { display:flex; align-items:center; gap:6px; font-size:.82rem; padding:7px 9px; border-radius:10px; background:var(--gray-bg); }
+  .cond .m { font-weight:800; width:16px; text-align:center; }
+  .cond.on .m { color:var(--green); } .cond.off .m { color:var(--red); } .cond.off { opacity:.75; }
+
+  .weights { display:flex; gap:8px; flex-wrap:wrap; }
+  .wchip { display:flex; align-items:center; gap:6px; font-size:.82rem; background:var(--gray-bg); padding:5px 10px; border-radius:999px; }
+  .sw { width:10px; height:10px; border-radius:3px; display:inline-block; flex:none; }
+
+  details > summary { cursor:pointer; list-style:none; color:var(--blue); font-size:.82rem; font-weight:600; margin-top:10px; }
+  details > summary::-webkit-details-marker { display:none; }
+  details > summary::before { content:"＋ "; } details[open] > summary::before { content:"－ "; }
+
+  /* 入力 */
+  .field { margin-bottom:14px; }
+  .field .lab { display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:6px; }
+  .field .lab b { font-size:.95rem; }
+  input[type=number] { width:100%; padding:9px 10px; font-size:16px; border:1px solid var(--line); border-radius:10px;
+                       background:var(--card2); color:var(--text); font-family:inherit; font-feature-settings:"tnum"; }
+  input[type=number]:focus { outline:2px solid var(--blue); outline-offset:-1px; }
+  input[type=range] { width:100%; accent-color:var(--blue); }
+  .toggle { display:flex; justify-content:space-between; align-items:center; padding:4px 0 14px; }
+  .toggle input { display:none; }
+  .toggle .knob { width:50px; height:30px; background:var(--line); border-radius:999px; position:relative; transition:.2s; flex:none; cursor:pointer; }
+  .toggle .knob::after { content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.25); }
+  .toggle input:checked + .knob { background:var(--green); }
+  .toggle input:checked + .knob::after { left:23px; }
+  .alloc-bar { display:flex; height:10px; border-radius:999px; overflow:hidden; background:var(--gray-bg); margin:6px 0; }
+  .alloc-bar > div { height:100%; transition:width .25s; }
+  .legend { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:.75rem; color:var(--muted); }
+  .legend span { display:inline-flex; align-items:center; gap:5px; }
+
+  .hold-grid { display:grid; grid-template-columns:64px 1fr 1fr 74px; gap:8px; align-items:center; }
+  .hold-grid .hd { font-size:.72rem; color:var(--muted); font-weight:700; }
+  .hold-grid .tk { font-weight:800; font-size:.9rem; display:flex; align-items:center; gap:6px; }
+  .hold-grid .val { text-align:right; font-size:.8rem; color:var(--muted); }
+  .btns { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  button { padding:8px 14px; border-radius:10px; border:1px solid var(--line); background:var(--card2); color:var(--text); font-size:.85rem; font-family:inherit; cursor:pointer; }
+  button.danger { color:var(--red); }
+
+  /* 結果 */
+  .total { display:flex; justify-content:space-between; align-items:baseline; }
+  .total .n { font-size:1.6rem; font-weight:800; letter-spacing:-.02em; }
+  .barrow { display:grid; grid-template-columns:36px 1fr; gap:10px; align-items:center; margin:6px 0; font-size:.75rem; color:var(--muted); }
+  .barrow .alloc-bar { height:14px; margin:0; border-radius:6px; }
+  .banner { border-radius:14px; padding:12px 14px; margin:14px 0 10px; font-size:.88rem; }
+  .banner.ok { background:var(--green-bg); color:var(--green); font-weight:700; }
+  .banner.do { background:var(--amber-bg); }
+  .banner.do b { color:var(--amber); }
+  .banner ul { margin:6px 0 0; padding-left:18px; }
+  .trades { display:grid; gap:8px; }
+  .trade { display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:var(--card2); }
+  .trade .act { font-weight:800; font-size:.8rem; padding:5px 10px; border-radius:8px; min-width:44px; text-align:center; }
+  .trade.buy .act { color:var(--green); background:var(--green-bg); }
+  .trade.sell .act { color:var(--red); background:var(--red-bg); }
+  .trade.hold .act, .trade.none .act { color:var(--muted); background:var(--gray-bg); }
+  .trade .t { font-weight:800; display:flex; align-items:center; gap:6px; }
+  .trade .d { font-size:.75rem; color:var(--muted); }
+  .trade .q { text-align:right; }
+  .trade .q .n { font-size:1.15rem; font-weight:800; }
+  .trade .q .u { font-size:.75rem; color:var(--muted); }
+  .warnbox { background:var(--amber-bg); border-radius:12px; padding:10px 12px; font-size:.85rem; margin:8px 0; }
+
+  footer { font-size:.75rem; color:var(--muted); margin:22px 4px; line-height:1.7; }
+  .skeleton { color:var(--muted); text-align:center; padding:40px 0; }
 </style>
 </head>
 <body>
 <main>
-  <h1>Hybrid Signals</h1>
-  <div class="muted" id="meta">読み込み中…</div>
+  <header>
+    <div>
+      <h1>Hybrid Signals</h1>
+      <div class="sub" id="meta">読み込み中…</div>
+    </div>
+    <span class="fresh" id="fresh"></span>
+  </header>
 
-  <div id="signals"></div>
+  <div id="signals"><div class="skeleton">シグナルを読み込んでいます…</div></div>
 
   <section class="card">
-    <h2>あなたの設定</h2>
-    <div class="switch"><input type="checkbox" id="soxlOn"><label for="soxlOn" style="margin:0;color:var(--text)">SOXL戦略を使う</label></div>
-    <div class="grid">
-      <div><label for="soxlBase">SOXL 購入比率（%）</label><input type="number" id="soxlBase" min="0" max="100" step="0.5"></div>
-      <div><label for="newShare">Hybrid内の新Hybrid割合（%）</label><input type="number" id="newShare" min="0" max="100" step="5"></div>
+    <div class="card-h"><h2>⚙️ 配分の設定</h2></div>
+    <label class="toggle"><span>SOXL戦略を使う</span><input type="checkbox" id="soxlOn"><span class="knob"></span></label>
+    <div class="field" id="soxlBaseField">
+      <div class="lab"><span>SOXL 購入比率</span><b id="soxlBaseOut"></b></div>
+      <input type="range" id="soxlBase" min="5" max="50" step="2.5">
     </div>
-    <div class="muted" id="allocNote" style="margin-top:8px"></div>
+    <div class="field">
+      <div class="lab"><span>Hybrid内の比率（旧 : 新）</span><b id="newShareOut"></b></div>
+      <input type="range" id="newShare" min="0" max="100" step="5">
+    </div>
+    <div class="alloc-bar" id="baseBar"></div>
+    <div class="legend" id="baseLegend"></div>
+    <div class="muted" style="margin-top:6px" id="allocNote"></div>
   </section>
 
   <section class="card">
-    <h2>保有状況</h2>
-    <div class="muted">株数と現金（USD）を入力してください。入力内容はこの端末のブラウザ内だけに保存され、どこにも送信されません。</div>
-    <div class="grid" id="holdingInputs" style="margin-top:10px"></div>
-    <h3>価格（USD）</h3>
-    <div class="muted" id="priceNote"></div>
-    <div class="grid" id="priceInputs" style="margin-top:6px"></div>
-    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <div class="card-h"><h2>💼 保有状況</h2><span class="muted">この端末内にのみ保存</span></div>
+    <div class="hold-grid" id="holdGrid"></div>
+    <div class="muted" id="priceNote" style="margin-top:10px"></div>
+    <div class="btns">
       <button id="resetPrices">価格を最新終値に戻す</button>
-      <button id="clearAll">入力をすべて消去</button>
+      <button id="clearAll" class="danger">入力を消去</button>
     </div>
   </section>
 
-  <section class="card">
-    <h2>目標配分と売買指示</h2>
-    <div id="result"><div class="muted">保有状況を入力すると表示されます。</div></div>
+  <section class="card" id="resultCard">
+    <div class="card-h"><h2>📋 目標配分と売買</h2></div>
+    <div id="result"><div class="skeleton">保有株数か現金を入力すると表示されます</div></div>
   </section>
 
   <footer>
-    毎朝7:00（日本時間）頃に前営業日の米国終値で判定した結果を表示しています。投資判断はご自身の責任で行ってください。
-    売買株数は入力値と表示価格による概算です。発注前に実際の価格と保有数を確認してください。
+    毎朝7:00（日本時間）頃、前営業日の米国終値で判定した結果を表示しています。<br>
+    売買株数は入力値と表示価格による概算です。発注前に実際の価格・保有数をご確認ください。投資判断はご自身の責任でお願いします。<br>
+    入力した保有情報はこのブラウザ内（localStorage）にのみ保存され、外部には送信されません。
   </footer>
 </main>
 
@@ -94,114 +208,167 @@ const $ = (id) => document.getElementById(id);
 const pct = (x, d = 1) => (x == null || isNaN(x)) ? "--" : (x * 100).toFixed(d) + "%";
 const spct = (x, d = 1) => (x == null || isNaN(x)) ? "--" : (x >= 0 ? "+" : "") + (x * 100).toFixed(d) + "%";
 const usd = (x) => (x == null || isNaN(x)) ? "--" : "$" + x.toLocaleString("en-US", { maximumFractionDigits: 0 });
+const fmt = (x, d = 2) => (x == null || isNaN(x)) ? "--" : Number(x).toLocaleString("en-US", { maximumFractionDigits: d });
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const color = (t) => `var(--c-${t})`;
+const sw = (t) => `<span class="sw" style="background:${color(t)}"></span>`;
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
 
 let SIG = null;
 let store = loadStore();
-
-function loadStore() {
-  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; }
-}
+function loadStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; } }
 function saveStore() { localStorage.setItem(STORE_KEY, JSON.stringify(store)); }
 
-/* ---------- シグナル表示 ---------- */
-function positionItems(items) {
-  if (!items || !items.length) return "";
-  return `<details open><summary>現在地を見る</summary>${items.map((it) =>
-    `<div class="row"><span>${esc(it.label)}</span><span class="v">${esc(it.value)}
-      ${it.note ? `<span class="muted">(${esc(it.note)})</span>` : ""}</span></div>`).join("")}</details>`;
+/* ---------- 部品 ---------- */
+// lo〜hi のスケールで値を点表示。marks: [{v, label}]、zones: [{from,to,color}]
+function gauge(v, lo, hi, marks = [], zones = [], dotColor = "var(--blue)") {
+  const pos = (x) => clamp((x - lo) / (hi - lo), 0, 1) * 100;
+  return `<div class="gauge">${zones.map((z) => `<div class="fill" style="left:${pos(z.from)}%;width:${pos(z.to) - pos(z.from)}%;background:${z.color};opacity:.35"></div>`).join("")}
+    ${marks.map((m) => `<div class="mark" style="left:${pos(m.v)}%"></div>`).join("")}
+    ${v == null || isNaN(v) ? "" : `<div class="dot" style="left:${pos(v)}%;background:${dotColor}"></div>`}</div>
+    <div class="gscale">${marks.map((m) => { const x = pos(m.v); const tr = x > 88 ? "-100%" : x < 12 ? "0" : "-50%"; return `<span style="left:${x}%;transform:translateX(${tr})">${esc(m.label)}</span>`; }).join("")}</div>`;
 }
+function progress(v, max, col) {
+  return `<div class="gauge"><div class="fill" style="width:${clamp(v / max, 0, 1) * 100}%;background:${col}"></div></div>`;
+}
+const parsePct = (s) => { const m = String(s).match(/([+-]?\d+(\.\d+)?)%/); return m ? parseFloat(m[1]) / 100 : null; };
 
+const STATE_PILL = { 0: "g", 1: "a", 2: "b", "-1": "r" };
 const SOXL_COND_LABELS = {
   sox_gt_ma150: "SOX > MA150", ma20_gt_ma150: "MA20 > MA150", sox_gt_ma50: "SOX > MA50",
-  daily_ret_positive: "当日リターン > 0", ma200_uptrend: "MA200 上向き", vol_low: "20日ボラ < 55%",
+  daily_ret_positive: "前日比プラス", ma200_uptrend: "MA200 上向き", vol_low: "20日ボラ < 55%",
 };
 const EXIT_REASON = { normal_exit: "通常EXIT", take_profit: "35%利確", below_ma200: "SOX < MA200", sox_trailing_stop: "SOX高値から-15%" };
 
+/* ---------- シグナル ---------- */
+function soxlStatus(s) {
+  if (!s) return null;
+  const p = s.pending;
+  if (p && p.action === "BUY") return { label: "BUY予定", cls: "g", sub: `${p.execution_date?.slice(5)} 終値で購入` };
+  if (p && p.action === "SELL") return { label: "SELL予定", cls: "r", sub: `${p.execution_date?.slice(5)} 終値で売却` };
+  if (s.model_position === "HOLD") return { label: "保有中", cls: "b", sub: s.hold_days != null ? `${s.hold_days}日目` : "" };
+  const met = Object.values(s.entry_conditions || {}).filter(Boolean).length;
+  return { label: "待機", cls: "n", sub: s.cooldown > 0 ? `クールダウン残${s.cooldown}日` : `購入条件 ${met}/6` };
+}
+
 function renderSignals() {
   const o = SIG.old_hybrid, n = SIG.new_hybrid, s = SIG.soxl;
-  const goldTk = o.gold_ticker ? `${o.gold_ticker}（${o.gold_leverage}倍）` : "なし（Gold 0%）";
-  let html = `
-  <section class="card">
-    <h2>旧Hybrid</h2>
-    <div class="row"><span>NDX State</span><span class="v big">State ${o.ndx_state}: ${esc(o.ndx_state_name)}</span></div>
-    ${positionItems(o.ndx_position)}
-    <div class="row" style="margin-top:10px"><span>GOLD State</span><span class="v big">State ${o.gold_state}: ${esc(o.gold_state_name)}</span></div>
-    ${positionItems(o.gold_position)}
-    <h3>旧Hybrid内の配分</h3>
-    <div class="row"><span>TQQQ</span><span class="v">${pct(o.tqqq_weight, 0)}</span></div>
-    <div class="row"><span>Gold</span><span class="v">${pct(o.gold_weight, 0)} / ${esc(goldTk)}</span></div>
-    <div class="muted">判定日: ${esc(o.date)}</div>
-  </section>
-  <section class="card">
-    <h2>新Hybrid</h2>
-    <div class="row"><span>NDX RiskOn <span class="muted">(10日実現ボラ ${pct(n.ndx_vol10)})</span></span><span class="v big">${n.ndx_risk_on ? "ON" : "OFF"}</span></div>
-    <div class="muted">ボラ50%以上でOFF / 40%以下でON（かつ月末Cashモメンタムも要ON）</div>
-    <details><summary>Cashモメンタムの内訳</summary>
-      <div class="row"><span>NDX 252日リターン</span><span class="v">${spct(n.ndx_252r)}</span></div>
-      <div class="row"><span>Cash 252日リターン</span><span class="v">${spct(n.cash_252r)}</span></div>
-      <div class="row"><span>モメンタム</span><span class="v">${esc(n.ndx_momentum_state ?? "--")}</span></div>
-      <div class="muted">最終判定日: ${esc(n.last_momentum_check_date ?? "--")}（月末のみ判定）</div>
-    </details>
-    <div class="row" style="margin-top:10px"><span>Gold State <span class="muted">(20日実現ボラ ${pct(n.gold_vol20)})</span></span><span class="v big">${esc(n.gold_vol_state)}</span></div>
-    <div class="muted">ボラ25%以上でOFF / 15%以下でON</div>
-    <h3>新Hybrid内の配分</h3>
-    <div class="row"><span>TQQQ / SHNY</span><span class="v">${pct(n.ndx_weight, 0)} / ${pct(n.gold_weight, 0)}（残りは現金）</span></div>
-    <div class="muted">判定日: ${esc(n.last_date)}</div>
-  </section>`;
-  if (s) html += renderSoxl(s);
+  const st = soxlStatus(s);
+  let html = `<div class="summary">
+    <div class="tile"><div class="k">旧Hybrid</div><div class="v">NDX ${esc(o.ndx_state_name)}</div><div class="s">GOLD ${esc(o.gold_state_name)}</div></div>
+    <div class="tile"><div class="k">新Hybrid</div><div class="v">RiskOn ${n.ndx_risk_on ? "ON" : "OFF"}</div><div class="s">Gold ${esc(n.gold_vol_state)}</div></div>
+    ${st ? `<div class="tile"><div class="k">SOXL</div><div class="v"><span class="pill ${st.cls}" style="font-size:.85rem">${st.label}</span></div><div class="s">${esc(st.sub)}</div></div>` : ""}
+  </div>`;
+
+  if (s && s.errors && s.errors.length) {
+    html += `<div class="action err"><span class="ic">⚠️</span><div><b>SOXL データエラー</b>${s.errors.map((e) => esc(e.message || e)).join("<br>")}</div></div>`;
+  }
+  if (s && s.pending) {
+    const p = s.pending;
+    html += p.action === "BUY"
+      ? `<div class="action buy"><span class="ic">🟢</span><div><b>SOXL 購入予定：${esc(p.execution_date)} の終値</b>ポートフォリオの ${pct(p.target_ratio, 2)} を購入${p.entry_fraction < 1 ? `（利確後のため通常の${pct(p.entry_fraction, 0)}）` : ""}。シグナル日 ${esc(p.signal_date)}</div></div>`
+      : `<div class="action sell"><span class="ic">🔴</span><div><b>SOXL 売却予定：${esc(p.execution_date)} の終値</b>全数売却（${esc(EXIT_REASON[p.reason] || p.reason || "")}）。シグナル日 ${esc(p.signal_date)}</div></div>`;
+  }
+
+  html += renderOld(o) + renderNew(n) + (s ? renderSoxl(s) : "");
   $("signals").innerHTML = html;
 }
 
-function renderSoxl(s) {
-  const p = s.pending;
-  let head;
-  if (p && p.action === "BUY") head = `<span class="badge ok">BUY予定</span>`;
-  else if (p && p.action === "SELL") head = `<span class="badge ng">SELL予定</span>`;
-  else head = `<span class="badge">${s.model_position === "HOLD" ? "保有中" : "CASH（待機）"}</span>`;
+function stateBlock(title, state, name, items, isGold) {
   let body = "";
-  if (s.errors && s.errors.length) {
-    body += s.errors.map((e) => `<div class="alert">データエラー: ${esc(e.message || e)}</div>`).join("");
-  }
-  if (p) {
-    const what = p.action === "BUY"
-      ? `PFの${pct(p.target_ratio, 2)}を購入${p.entry_fraction < 1 ? `（利確後のため通常の${pct(p.entry_fraction, 0)}）` : ""}`
-      : `全数売却（${esc(EXIT_REASON[p.reason] || p.reason || "")}）`;
-    body += `<div class="alert"><b>${esc(p.execution_date)} の終値で執行</b>（シグナル ${esc(p.signal_date)}）<br>${what}</div>`;
-  }
-  body += `<div class="row"><span>SOX 終値 / MA200</span><span class="v">${fmt(s.close)} / ${fmt(s.ma200)}</span></div>`;
-  if (s.model_position === "HOLD") {
-    body += `<div class="row"><span>SOX 最高値からの位置</span><span class="v">${spct(s.dist_from_high)} <span class="muted">(-15%で売却)</span></span></div>`;
-    const tp = s.take_profit;
-    if (tp) body += `<div class="row"><span>利確判定（シグナル日比）</span><span class="v ${tp.hit ? "ok" : ""}">${spct(tp.signal_return)} / +35%</span></div>
-      <div class="muted">基準 ${esc(tp.base_date)} の SOXL ${fmt(tp.base_price)} → 利確ライン ${fmt(tp.line_price)}</div>`;
-    body += `<div class="row"><span>保有開始</span><span class="v">${esc(s.model_entry_date || s.hold_since || "--")}</span></div>`;
-  } else {
-    body += `<div class="row"><span>クールダウン</span><span class="v">${s.cooldown > 0 ? `残り${s.cooldown}日` : "なし"}</span></div>`;
-    if (s.last_exit_date) body += `<div class="row"><span>前回売却</span><span class="v">${esc(s.last_exit_date)}（${esc(EXIT_REASON[s.last_exit_reason] || s.last_exit_reason || "")}）</span></div>`;
-    body += `<div class="row"><span>次回購入の比率</span><span class="v">通常の${pct(s.next_entry_fraction, 0)}</span></div>`;
-    const c = s.entry_conditions || {};
-    const met = Object.values(c).filter(Boolean).length;
-    body += `<details open><summary>購入条件 ${met}/6</summary>${Object.keys(SOXL_COND_LABELS).map((k) =>
-      `<div class="row"><span>${SOXL_COND_LABELS[k]}</span><span class="v ${c[k] ? "ok" : "ng"}">${c[k] ? "✓" : "✗"}</span></div>`).join("")}
-      <div class="muted">6条件すべて成立で翌営業日の終値で購入（クールダウン中は除く）</div></details>`;
-  }
-  if (s.overheat_warning) body += `<div class="alert">過熱警告: SOX が MA200 から ${spct(s.overheat)}</div>`;
+  (items || []).forEach((it) => {
+    if (it.label === "備考") { body += `<div class="note muted" style="margin-top:6px">${esc(it.value)}</div>`; return; }
+    let g = "";
+    const days = String(it.value).match(/^(\d+)\/(\d+)日$/);
+    if (days) g = progress(+days[1], +days[2], "var(--blue)");
+    else if (it.label.includes("52週高値")) {
+      const v = parsePct(it.value); g = gauge(v, -0.2, 0, [{ v: -0.1, label: "-10%" }, { v: 0, label: "高値" }], [{ from: -0.2, to: -0.1, color: "var(--red)" }]);
+    } else if (it.label.includes("SMA200") || it.label.includes("SMA50")) {
+      const v = parsePct(it.value); g = gauge(v, -0.2, 0.2, [{ v: 0, label: "0%" }], [{ from: -0.2, to: 0, color: "var(--red)" }]);
+    }
+    body += `<div class="metric"><div class="top"><span class="lab">${esc(it.label)}</span><span class="val">${esc(it.value)}</span></div>
+      ${g}${it.note ? `<div class="note">${esc(it.note)}</div>` : ""}</div>`;
+  });
+  return `<div class="sub-card"><div class="state-row"><span class="name">${title}</span>
+    <span class="pill ${STATE_PILL[state] || "n"}">State ${state}：${esc(name)}</span></div>${body}</div>`;
+}
+
+function renderOld(o) {
+  const goldTk = o.gold_ticker ? `${o.gold_ticker}（${o.gold_leverage}倍）` : "Gold";
   return `<section class="card">
-    <h2>SOXL（v${esc(s.strategy_version)}） ${head}</h2>
-    ${body}
-    <div class="muted">判定日: ${esc(s.date)}</div>
+    <div class="card-h"><h2>🛡️ 旧Hybrid</h2><span class="date">判定 ${esc(o.date)}</span></div>
+    <div class="split">${stateBlock("NDX", o.ndx_state, o.ndx_state_name, o.ndx_position)}${stateBlock("GOLD", o.gold_state, o.gold_state_name, o.gold_position, true)}</div>
+    <h3>旧Hybrid内の配分</h3>
+    <div class="weights"><span class="wchip">${sw("TQQQ")}TQQQ <b>${pct(o.tqqq_weight, 0)}</b></span>
+      <span class="wchip">${sw(o.gold_ticker || "GLDM")}${esc(goldTk)} <b>${pct(o.gold_weight, 0)}</b></span></div>
   </section>`;
 }
-const fmt = (x) => (x == null || isNaN(x)) ? "--" : Number(x).toLocaleString("en-US", { maximumFractionDigits: 2 });
+
+function renderNew(n) {
+  return `<section class="card">
+    <div class="card-h"><h2>⚡ 新Hybrid</h2><span class="date">判定 ${esc(n.last_date)}</span></div>
+    <div class="split">
+      <div class="sub-card"><div class="state-row"><span class="name">NDX RiskOn</span><span class="pill ${n.ndx_risk_on ? "g" : "r"}">${n.ndx_risk_on ? "ON" : "OFF"}</span></div>
+        <div class="metric"><div class="top"><span class="lab">10日実現ボラ</span><span class="val">${pct(n.ndx_vol10)}</span></div>
+        ${gauge(n.ndx_vol10, 0, 0.7, [{ v: 0.4, label: "40%" }, { v: 0.5, label: "50%" }], [{ from: 0, to: 0.4, color: "var(--green)" }, { from: 0.5, to: 0.7, color: "var(--red)" }])}
+        <div class="note">50%以上でOFF / 40%以下でON（月末のCashモメンタムもONが必要）</div></div>
+        <div class="metric"><div class="top"><span class="lab">Cashモメンタム</span><span class="val">${esc(n.ndx_momentum_state ?? "--")}</span></div>
+        <div class="note">NDX 252日 ${spct(n.ndx_252r)} / Cash ${spct(n.cash_252r)}（${esc(n.last_momentum_check_date ?? "--")} 判定・月末のみ）</div></div>
+      </div>
+      <div class="sub-card"><div class="state-row"><span class="name">Gold</span><span class="pill ${n.gold_vol_state === "ON" ? "g" : "r"}">${esc(n.gold_vol_state)}</span></div>
+        <div class="metric"><div class="top"><span class="lab">20日実現ボラ</span><span class="val">${pct(n.gold_vol20)}</span></div>
+        ${gauge(n.gold_vol20, 0, 0.35, [{ v: 0.15, label: "15%" }, { v: 0.25, label: "25%" }], [{ from: 0, to: 0.15, color: "var(--green)" }, { from: 0.25, to: 0.35, color: "var(--red)" }])}
+        <div class="note">25%以上でOFF / 15%以下でON</div></div>
+      </div>
+    </div>
+    <h3>新Hybrid内の配分</h3>
+    <div class="weights"><span class="wchip">${sw("TQQQ")}TQQQ <b>${pct(n.ndx_weight, 0)}</b></span>
+      <span class="wchip">${sw("SHNY")}SHNY <b>${pct(n.gold_weight, 0)}</b></span>
+      <span class="wchip">${sw("CASH")}現金 <b>${pct(1 - (n.ndx_weight || 0) - (n.gold_weight || 0), 0)}</b></span></div>
+  </section>`;
+}
+
+function renderSoxl(s) {
+  const st = soxlStatus(s);
+  let body = `<div class="metric"><div class="top"><span class="lab">SOX 終値 / MA200</span><span class="val">${fmt(s.close, 0)} / ${fmt(s.ma200, 0)}</span></div>
+    ${gauge(s.close && s.ma200 ? s.close / s.ma200 - 1 : null, -0.2, 0.4, [{ v: 0, label: "MA200" }, { v: 0.4, label: "過熱+40%" }], [{ from: -0.2, to: 0, color: "var(--red)" }])}
+    <div class="note">MA200 を下回ると売却（保有中）</div></div>`;
+  if (s.model_position === "HOLD") {
+    body += `<div class="metric"><div class="top"><span class="lab">SOX 最高値からの位置</span><span class="val">${spct(s.dist_from_high)}</span></div>
+      ${gauge(s.dist_from_high, -0.25, 0, [{ v: -0.15, label: "-15%" }, { v: 0, label: "高値" }], [{ from: -0.25, to: -0.15, color: "var(--red)" }])}</div>`;
+    const tp = s.take_profit;
+    if (tp) body += `<div class="metric"><div class="top"><span class="lab">利確判定（SOXL シグナル日比）</span><span class="val">${spct(tp.signal_return)}</span></div>
+      ${gauge(tp.signal_return, -0.2, 0.45, [{ v: 0, label: "0%" }, { v: 0.35, label: "+35%" }], [{ from: 0.35, to: 0.45, color: "var(--green)" }])}
+      <div class="note">基準 ${esc(tp.base_date)} の ${fmt(tp.base_price)} → 利確ライン ${fmt(tp.line_price)}</div></div>`;
+    body += `<div class="metric"><div class="top"><span class="lab">保有開始</span><span class="val">${esc(s.model_entry_date || s.hold_since || "--")}</span></div></div>`;
+  } else {
+    const c = s.entry_conditions || {};
+    const met = Object.values(c).filter(Boolean).length;
+    body += `<div class="metric"><div class="top"><span class="lab">購入条件</span><span class="val">${met} / 6</span></div>
+      ${progress(met, 6, met === 6 ? "var(--green)" : "var(--blue)")}
+      <div class="conds" style="margin-top:10px">${Object.keys(SOXL_COND_LABELS).map((k) =>
+        `<div class="cond ${c[k] ? "on" : "off"}"><span class="m">${c[k] ? "✓" : "✗"}</span>${SOXL_COND_LABELS[k]}</div>`).join("")}</div>
+      <div class="note" style="margin-top:6px">6条件すべて成立した翌営業日の終値で購入</div></div>`;
+    body += `<div class="metric"><div class="top"><span class="lab">クールダウン</span><span class="val">${s.cooldown > 0 ? `残り${s.cooldown}日` : "なし"}</span></div>
+      ${s.last_exit_date ? `<div class="note">前回売却 ${esc(s.last_exit_date)}（${esc(EXIT_REASON[s.last_exit_reason] || s.last_exit_reason || "")}）／ 最短の購入シグナル日 ${esc(s.earliest_buy_signal_date || "--")}</div>` : ""}</div>`;
+    body += `<div class="metric"><div class="top"><span class="lab">次回購入の比率</span><span class="val">通常の${pct(s.next_entry_fraction, 0)}</span></div>
+      <div class="note">35%利確で売却した後の再購入は通常の75%</div></div>`;
+  }
+  return `<section class="card">
+    <div class="card-h"><h2>🚀 SOXL <span class="muted">v${esc(s.strategy_version)}</span></h2><span class="pill ${st.cls}">${st.label}</span></div>
+    ${body}
+    <div class="muted" style="margin-top:6px">判定 ${esc(s.date)}</div>
+  </section>`;
+}
 
 /* ---------- 入力 ---------- */
 function buildInputs() {
-  $("holdingInputs").innerHTML = TICKERS.map((t) =>
-    `<div><label for="sh_${t}">${t}（株）</label><input type="number" id="sh_${t}" min="0" step="1" inputmode="numeric"></div>`).join("")
-    + `<div><label for="cash">現金（USD）</label><input type="number" id="cash" min="0" step="0.01" inputmode="decimal"></div>`;
-  $("priceInputs").innerHTML = TICKERS.map((t) =>
-    `<div><label for="px_${t}">${t}</label><input type="number" id="px_${t}" min="0" step="0.01" inputmode="decimal"></div>`).join("");
+  $("holdGrid").innerHTML = `<div class="hd">銘柄</div><div class="hd">株数</div><div class="hd">価格 USD</div><div class="hd" style="text-align:right">評価額</div>`
+    + TICKERS.map((t) => `<div class="tk">${sw(t)}${t}</div>
+      <input type="number" id="sh_${t}" min="0" step="1" inputmode="numeric" placeholder="0">
+      <input type="number" id="px_${t}" min="0" step="0.01" inputmode="decimal">
+      <div class="val" id="val_${t}">--</div>`).join("")
+    + `<div class="tk">${sw("CASH")}現金</div><input type="number" id="cash" min="0" step="0.01" inputmode="decimal" placeholder="0" style="grid-column:span 2"><div class="val" id="val_CASH">--</div>`;
 
   const sh = store.shares || {};
   TICKERS.forEach((t) => { $("sh_" + t).value = sh[t] ?? ""; });
@@ -233,6 +400,10 @@ function onChange() {
   compute();
 }
 
+function barHTML(parts) {
+  return parts.filter((p) => p.w > 0.0005).map((p) => `<div style="width:${p.w * 100}%;background:${p.c}" title="${esc(p.l)} ${pct(p.w)}"></div>`).join("");
+}
+
 /* ---------- 配分計算（ダッシュボードと同じロジック） ---------- */
 // SOXL の目標比率と保有継続モード。保有中（売却予定なし）で SOXL を持っていれば現在比率のまま売買しない
 function soxlAllocation(s, on, base, h) {
@@ -259,24 +430,37 @@ function combinedWeights(oldR, newR) {
 
 function compute() {
   const shares = {}, prices = {}, values = {};
-  let total = num("cash");
+  const cash = num("cash");
+  let total = cash;
   TICKERS.forEach((t) => {
     shares[t] = num("sh_" + t); prices[t] = num("px_" + t);
     values[t] = shares[t] * prices[t]; total += values[t];
+    $("val_" + t).textContent = values[t] > 0 ? usd(values[t]) : "--";
   });
-  const cash = num("cash");
+  $("val_CASH").textContent = cash > 0 ? usd(cash) : "--";
+
   const soxlOn = $("soxlOn").checked;
-  const base = Math.min(1, Math.max(0, num("soxlBase") / 100));
-  const newShare = Math.min(1, Math.max(0, num("newShare") / 100));
+  const base = clamp(num("soxlBase") / 100, 0, 1);
+  const newShare = clamp(num("newShare") / 100, 0, 1);
   const s = SIG.soxl;
 
-  const sBase = soxlOn ? base : 0;
-  $("allocNote").textContent = `基本配分: SOXL ${pct(sBase, 1)} / 旧Hybrid ${pct((1 - sBase) * (1 - newShare), 1)} / 新Hybrid ${pct((1 - sBase) * newShare, 1)}`
-    + (soxlOn ? "（SOXL を持っていない間は、その分も旧・新Hybridに同じ割合で配分）" : "");
-  $("priceNote").textContent = `初期値は ${SIG.price_date} の終値。発注前に現在値へ書き換えると正確になります。`;
+  // 設定カード
+  $("soxlBaseField").style.display = soxlOn ? "" : "none";
+  $("soxlBaseOut").textContent = pct(base, 1);
+  $("newShareOut").textContent = `${Math.round((1 - newShare) * 100)} : ${Math.round(newShare * 100)}`;
+  const sB = soxlOn ? base : 0;
+  const baseParts = [
+    { l: "SOXL", w: sB, c: color("SOXL") },
+    { l: "旧Hybrid", w: (1 - sB) * (1 - newShare), c: "var(--blue)" },
+    { l: "新Hybrid", w: (1 - sB) * newShare, c: "#06b6d4" },
+  ];
+  $("baseBar").innerHTML = barHTML(baseParts);
+  $("baseLegend").innerHTML = baseParts.map((p) => `<span><span class="sw" style="background:${p.c}"></span>${p.l} ${pct(p.w, 1)}</span>`).join("");
+  $("allocNote").textContent = soxlOn ? "SOXL を持っていない間は、その分も旧・新Hybridに同じ比率で配分します。" : "";
+  $("priceNote").textContent = `価格の初期値は ${SIG.price_date} の終値です。発注前に現在値へ書き換えると正確になります。`;
 
-  if (total <= 0) { $("result").innerHTML = `<div class="muted">保有状況を入力すると表示されます。</div>`; return; }
-  const missingPx = TICKERS.filter((t) => prices[t] <= 0);
+  if (total <= 0) { $("result").innerHTML = `<div class="skeleton">保有株数か現金を入力すると表示されます</div>`; return; }
+  const missingPx = TICKERS.filter((t) => shares[t] > 0 && prices[t] <= 0);
 
   const h = { shares, values, total };
   const [soxlRatio, holdMode] = soxlAllocation(s, soxlOn, base, h);
@@ -288,77 +472,89 @@ function compute() {
   // 乖離チェック（ダッシュボードと同じ ±10%）
   const reasons = [];
   const tqqqDev = Math.abs(values.TQQQ / total - (w.TQQQ || 0));
-  if (tqqqDev > TOLERANCE) reasons.push(`TQQQ 乖離 ${pct(tqqqDev)}`);
+  if (tqqqDev > TOLERANCE) reasons.push(`TQQQ が目標から ${pct(tqqqDev)} ずれ`);
   const cashDev = Math.abs(cash / total - targetCash);
-  if (cashDev > TOLERANCE) reasons.push(`現金比率 乖離 ${pct(cashDev)}`);
+  if (cashDev > TOLERANCE) reasons.push(`現金比率が目標から ${pct(cashDev)} ずれ`);
   GOLD_TICKERS.forEach((t) => {
-    const tw = w[t] || 0, cw = values[t] / total, dev = Math.abs(cw - tw);
-    if (tw > 0 && dev > TOLERANCE) reasons.push(`${t} 乖離 ${pct(dev)}`);
-    else if (tw <= 0 && values[t] > total * 0.01) reasons.push(`${t} 売却必要`);
+    const tw = w[t] || 0, dev = Math.abs(values[t] / total - tw);
+    if (tw > 0 && dev > TOLERANCE) reasons.push(`${t} が目標から ${pct(dev)} ずれ`);
+    else if (tw <= 0 && values[t] > total * 0.01) reasons.push(`${t} は売却対象`);
   });
   if (soxlOn && !holdMode) {
     const dev = Math.abs(values.SOXL / total - soxlRatio);
     if (dev > TOLERANCE) {
-      if (soxlRatio > 0) reasons.push(`SOXL 乖離 ${pct(dev)}`);
-      else if (values.SOXL > total * 0.01) reasons.push("SOXL 売却必要（CASH状態）");
+      if (soxlRatio > 0) reasons.push(`SOXL が目標から ${pct(dev)} ずれ`);
+      else if (values.SOXL > total * 0.01) reasons.push("SOXL は売却対象（待機中）");
     }
   }
-  // SOXL の BUY/SELL 予定は乖離に関係なく指示を出す
-  const soxlEvent = soxlOn && s && s.pending ? s.pending.action : null;
+  const soxlEvent = soxlOn && s && s.pending ? s.pending : null;
 
-  // 売買指示（フルリバランス）
+  // 売買（フルリバランス）
   const tradeTickers = ["TQQQ", ...GOLD_TICKERS];
   if (soxlOn && !holdMode) tradeTickers.push("SOXL");
-  const rows = [];
-  tradeTickers.forEach((t) => {
+  const rows = tradeTickers.map((t) => {
     const tw = w[t] || 0, px = prices[t];
-    const target = tw > 0 && px > 0 ? Math.floor(total * tw / px) : (tw > 0 ? null : 0);
-    const delta = target == null ? null : target - shares[t];
-    rows.push({ t, tw, cw: values[t] / total, cur: shares[t], target, delta, px });
+    const target = tw > 0 ? (px > 0 ? Math.floor(total * tw / px) : null) : 0;
+    return { t, tw, cw: values[t] / total, cur: shares[t], target, delta: target == null ? null : target - shares[t], px };
   });
   if (soxlOn && holdMode) rows.push({ t: "SOXL", tw: soxlRatio, cw: soxlRatio, cur: shares.SOXL, target: shares.SOXL, delta: 0, px: prices.SOXL, hold: true });
 
-  const needed = reasons.length > 0 || soxlEvent;
-  let html = `<div class="row"><span>評価額合計</span><span class="v big">${usd(total)}</span></div>
-    <div class="row"><span>実際の配分</span><span class="v">SOXL ${pct(soxlRatio)} / 旧Hybrid ${pct(oldR)} / 新Hybrid ${pct(newR)} / 目標現金 ${pct(targetCash)}</span></div>`;
-  if (holdMode) html += `<div class="muted">SOXL は保有継続中のため、売却シグナルが出るまで売買しません（値上がり・値下がりはHybrid側で吸収）。</div>`;
-  if (missingPx.length) html += `<div class="alert">価格が未入力: ${missingPx.join(", ")}</div>`;
-  html += needed
-    ? `<div class="alert"><b>リバランス推奨</b><br>${[...(soxlEvent ? [`SOXL ${soxlEvent === "BUY" ? "購入" : "売却"}予定（${esc(s.pending.execution_date)} 終値）`] : []), ...reasons].map(esc).join("<br>")}</div>`
-    : `<div class="ok" style="margin:8px 0;font-weight:700">リバランス不要（すべて ±10% 以内）</div>`;
+  const curParts = [...TICKERS.map((t) => ({ l: t, w: values[t] / total, c: color(t) })), { l: "現金", w: cash / total, c: color("CASH") }];
+  const tgtParts = [...TICKERS.map((t) => ({ l: t, w: w[t] || 0, c: color(t) })), { l: "現金", w: targetCash, c: color("CASH") }];
+  const legendT = [...TICKERS, "CASH"].filter((t, i) => curParts[i].w > 0.0005 || tgtParts[i].w > 0.0005);
 
-  html += `<table><thead><tr><th>銘柄</th><th>現在</th><th>目標</th><th>保有</th><th>目標株数</th><th>売買</th></tr></thead><tbody>`;
+  let html = `<div class="total"><span class="muted">評価額合計</span><span class="n">${usd(total)}</span></div>
+    <div class="barrow"><span>現在</span><div class="alloc-bar">${barHTML(curParts)}</div></div>
+    <div class="barrow"><span>目標</span><div class="alloc-bar">${barHTML(tgtParts)}</div></div>
+    <div class="legend" style="margin-left:46px">${legendT.map((t) => `<span>${sw(t)}${t === "CASH" ? "現金" : t}</span>`).join("")}</div>
+    <div class="muted" style="margin-top:8px">配分：SOXL ${pct(soxlRatio)} ／ 旧Hybrid ${pct(oldR)} ／ 新Hybrid ${pct(newR)}</div>`;
+  if (holdMode) html += `<div class="muted" style="margin-top:4px">SOXL は保有継続中のため、売却シグナルまで売買しません（値動きはHybrid側で調整）。</div>`;
+  if (missingPx.length) html += `<div class="warnbox">価格が未入力：${missingPx.join(", ")}</div>`;
+
+  const items = [...(soxlEvent ? [`SOXL ${soxlEvent.action === "BUY" ? "購入" : "売却"}予定（${soxlEvent.execution_date} の終値）`] : []), ...reasons];
+  html += items.length
+    ? `<div class="banner do"><b>リバランス推奨</b><ul>${items.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>`
+    : `<div class="banner ok">✓ リバランス不要（すべて目標の ±10% 以内）</div>`;
+
+  html += `<h3>${items.length ? "売買指示" : "目標に完全に合わせる場合"}</h3><div class="trades">`;
   rows.filter((r) => r.tw > 0 || r.cur > 0).forEach((r) => {
-    let act = "—";
-    if (r.hold) act = `<span class="muted">保有継続</span>`;
-    else if (r.delta == null) act = `<span class="warn">価格未入力</span>`;
-    else if (r.delta > 0) act = `<span class="act-buy">買 ${r.delta}</span>`;
-    else if (r.delta < 0) act = `<span class="act-sell">売 ${-r.delta}</span>`;
-    html += `<tr><td>${r.t}</td><td>${pct(r.cw)}</td><td>${pct(r.tw)}</td><td>${r.cur}</td><td>${r.target ?? "--"}</td><td>${act}</td></tr>`;
+    let cls = "none", act = "—", q = `<div class="n">0</div><div class="u">株</div>`;
+    if (r.hold) { cls = "hold"; act = "継続"; q = `<div class="u">保有継続</div>`; }
+    else if (r.delta == null) { act = "?"; q = `<div class="u">価格未入力</div>`; }
+    else if (r.delta > 0) { cls = "buy"; act = "買い"; q = `<div class="n">${r.delta}</div><div class="u">株 ≈ ${usd(r.delta * r.px)}</div>`; }
+    else if (r.delta < 0) { cls = "sell"; act = "売り"; q = `<div class="n">${-r.delta}</div><div class="u">株 ≈ ${usd(-r.delta * r.px)}</div>`; }
+    html += `<div class="trade ${cls}" data-ticker="${r.t}" data-delta="${r.hold ? 0 : (r.delta ?? "")}">
+      <span class="act">${act}</span>
+      <div><div class="t">${sw(r.t)}${r.t}</div><div class="d">${pct(r.cw)} → ${pct(r.tw)} ／ ${r.cur} → ${r.target ?? "--"} 株</div></div>
+      <div class="q">${q}</div></div>`;
   });
-  html += `<tr><td>現金</td><td>${pct(cash / total)}</td><td>${pct(targetCash)}</td><td colspan="3"></td></tr></tbody></table>`;
-  html += `<div class="muted" style="margin-top:8px">売買欄はすべてを目標に合わせる場合の株数です。リバランス不要と出ている時は、無理に売買する必要はありません。</div>`;
+  html += `</div><div class="muted" style="margin-top:10px">現金：${pct(cash / total)} → 目標 ${pct(targetCash)}</div>`;
   $("result").innerHTML = html;
 }
 
 /* ---------- 起動 ---------- */
-fetch("signals.json?t=" + Date.now(), { cache: "no-store" })
-  .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
-  .then((data) => {
-    SIG = data;
-    const gen = new Date(data.generated_at);
-    $("meta").textContent = `判定基準日（米国）: ${data.date} ／ 更新: ${gen.toLocaleString("ja-JP", { dateStyle: "short", timeStyle: "short" })}`;
-    renderSignals();
-    buildInputs();
-    compute();
-  })
-  .catch((e) => { $("meta").textContent = "シグナルの読み込みに失敗しました: " + e; });
+function loadSignals() {
+  return fetch("signals.json?t=" + Date.now(), { cache: "no-store" }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+}
+loadSignals().then((data) => {
+  SIG = data;
+  const gen = new Date(data.generated_at);
+  $("meta").textContent = `米国 ${data.date} 終値で判定 ・ ${gen.toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })} 更新`;
+  const stale = (Date.now() - gen.getTime()) / 3600e3 > 30;
+  $("fresh").className = "fresh " + (stale ? "stale" : "ok");
+  $("fresh").textContent = stale ? "更新が遅れています" : "● 最新";
+  renderSignals();
+  buildInputs();
+  compute();
+}).catch((e) => {
+  $("meta").textContent = "シグナルの読み込みに失敗しました";
+  $("signals").innerHTML = `<div class="action err"><span class="ic">⚠️</span><div><b>読み込みエラー</b>${esc(e)}</div></div>`;
+});
 
-// タブに戻った時、データが古ければ再読み込み
+// タブに戻った時、データが更新されていれば再読み込み
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState !== "visible" || !SIG) return;
-  fetch("signals.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json())
-    .then((d) => { if (d.generated_at !== SIG.generated_at) location.reload(); }).catch(() => {});
+  loadSignals().then((d) => { if (d.generated_at !== SIG.generated_at) location.reload(); }).catch(() => {});
 });
 </script>
 </body>
