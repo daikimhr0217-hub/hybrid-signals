@@ -110,6 +110,10 @@
   .toggle input:checked + .knob::after { left:23px; }
   .alloc-bar { display:flex; height:10px; border-radius:999px; overflow:hidden; background:var(--gray-bg); margin:6px 0; }
   .alloc-bar > div { height:100%; transition:width .25s; }
+  .scen { padding:10px 12px; border-radius:12px; border:1px solid var(--line); margin-top:8px; }
+  .scen.now { border-color:var(--blue); background:var(--blue-bg); }
+  .scen-h { display:flex; justify-content:space-between; align-items:center; font-size:.85rem; }
+  .scen-v { font-size:.8rem; font-weight:700; font-feature-settings:"tnum"; }
   .legend { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:.75rem; color:var(--muted); }
   .legend span { display:inline-flex; align-items:center; gap:5px; }
 
@@ -171,9 +175,8 @@
       <div class="lab"><span>Hybrid内の比率（旧 : 新）</span><b id="newShareOut"></b></div>
       <input type="range" id="newShare" min="0" max="100" step="5">
     </div>
-    <div class="alloc-bar" id="baseBar"></div>
-    <div class="legend" id="baseLegend"></div>
-    <div class="muted" style="margin-top:6px" id="allocNote"></div>
+    <div id="scenarios"></div>
+    <div class="legend" style="margin-top:8px"><span><span class="sw" style="background:var(--c-SOXL)"></span>SOXL</span><span><span class="sw" style="background:var(--blue)"></span>旧Hybrid</span><span><span class="sw" style="background:#06b6d4"></span>新Hybrid</span></div>
   </section>
 
   <section class="card">
@@ -448,15 +451,22 @@ function compute() {
   $("soxlBaseField").style.display = soxlOn ? "" : "none";
   $("soxlBaseOut").textContent = pct(base, 1);
   $("newShareOut").textContent = `${Math.round((1 - newShare) * 100)} : ${Math.round(newShare * 100)}`;
-  const sB = soxlOn ? base : 0;
-  const baseParts = [
-    { l: "SOXL", w: sB, c: color("SOXL") },
-    { l: "旧Hybrid", w: (1 - sB) * (1 - newShare), c: "var(--blue)" },
-    { l: "新Hybrid", w: (1 - sB) * newShare, c: "#06b6d4" },
-  ];
-  $("baseBar").innerHTML = barHTML(baseParts);
-  $("baseLegend").innerHTML = baseParts.map((p) => `<span><span class="sw" style="background:${p.c}"></span>${p.l} ${pct(p.w, 1)}</span>`).join("");
-  $("allocNote").textContent = soxlOn ? "SOXL を持っていない間は、その分も旧・新Hybridに同じ比率で配分します。" : "";
+  // SOXL の状況ごとの配分（待機時は SOXL 分も旧・新Hybridに同じ比率で配分）
+  const fracNow = !s ? 0 : s.pending ? (s.pending.action === "BUY" ? (s.pending.entry_fraction ?? 1) : 0)
+    : s.model_position === "HOLD" ? (s.current_entry_fraction ?? 1) : 0;
+  const scen = soxlOn ? [
+    { k: "待機時", f: 0, d: "SOXL 未保有" },
+    { k: "保有時", f: 1, d: "通常購入" },
+    { k: "利確後の再購入", f: s?.take_profit_threshold ? 0.75 : null, d: "通常の75%" },
+  ].filter((x) => x.f != null) : [{ k: "SOXL なし", f: 0, d: "" }];
+  const nowIdx = soxlOn ? scen.findIndex((x) => Math.abs(x.f - fracNow) < 1e-9) : 0;
+  $("scenarios").innerHTML = scen.map((x, i) => {
+    const sw_ = base * x.f, o = (1 - sw_) * (1 - newShare), nw = (1 - sw_) * newShare;
+    return `<div class="scen${i === nowIdx ? " now" : ""}">
+      <div class="scen-h"><span><b>${x.k}</b> <span class="muted">${x.d}</span></span>${i === nowIdx ? '<span class="pill b">いま</span>' : ""}</div>
+      <div class="alloc-bar">${barHTML([{ l: "SOXL", w: sw_, c: color("SOXL") }, { l: "旧Hybrid", w: o, c: "var(--blue)" }, { l: "新Hybrid", w: nw, c: "#06b6d4" }])}</div>
+      <div class="scen-v">${soxlOn ? `SOXL ${pct(sw_, 1)} ／ ` : ""}旧 ${pct(o, 1)} ／ 新 ${pct(nw, 1)}</div></div>`;
+  }).join("");
   $("priceNote").textContent = `価格の初期値は ${SIG.price_date} の終値です。発注前に現在値へ書き換えると正確になります。`;
 
   if (total <= 0) { $("result").innerHTML = `<div class="skeleton">保有株数か現金を入力すると表示されます</div>`; return; }
