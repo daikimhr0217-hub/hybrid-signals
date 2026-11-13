@@ -1,7 +1,7 @@
 {
  "schema": 1,
- "generated_at": "2026-11-11T07:00:06+09:00",
- "date": "2026-11-10",
+ "generated_at": "2026-11-13T21:16:13+09:00",
+ "date": "2026-11-12",
  "old_hybrid": {
   "ndx_state": 1,
   "ndx_state_name": "防御",
@@ -10,19 +10,19 @@
   "ndx_position": [
    {
     "label": "SMA50からの乖離",
-    "value": "-6.2%",
+    "value": "-4.2%",
     "note": "上回ればExit",
     "ok": false
    },
    {
     "label": "防御中安値からの回復",
-    "value": "+4.3%",
+    "value": "+6.3%",
     "note": "+15%でExit",
     "ok": false
    },
    {
     "label": "防御経過日数",
-    "value": "4日",
+    "value": "6日",
     "note": "25日でタイムアウトExit",
     "ok": true
    }
@@ -36,7 +36,7 @@
    },
    {
     "label": "SMA200からの乖離(参考)",
-    "value": "-9.9%",
+    "value": "-13.2%",
     "note": "",
     "ok": null
    }
@@ -45,7 +45,7 @@
   "gold_weight": 0.0,
   "gold_leverage": 0.0,
   "gold_ticker": null,
-  "date": "2026-11-10"
+  "date": "2026-11-12"
  },
  "new_hybrid": {
   "ndx_vol_state": "ON",
@@ -65,8 +65,8 @@
   "strategy_version": "1.4",
   "status": "ok",
   "errors": [],
-  "date": "2026-11-10",
-  "latest_confirmed_session": "2026-11-10",
+  "date": "2026-11-12",
+  "latest_confirmed_session": "2026-11-12",
   "action": "CASH",
   "position": "CASH",
   "model_position": "CASH",
@@ -75,8 +75,8 @@
   "cooldown_days": 5,
   "last_exit_date": "2026-10-19",
   "last_exit_reason": "normal_exit",
-  "earliest_buy_signal_date": "2026-11-11",
-  "earliest_buy_execution_date": "2026-11-12",
+  "earliest_buy_signal_date": "2026-11-13",
+  "earliest_buy_execution_date": "2026-11-16",
   "hold_since": null,
   "hold_days": null,
   "entry_high": null,
@@ -92,12 +92,12 @@
   "entry_signal_date": null,
   "model_entry_date": null,
   "model_entry_soxl_price": null,
-  "overheat": -0.07865172698603318,
+  "overheat": -0.03387661506420959,
   "overheat_warning": false,
   "sox_ret": null,
-  "close": 9998.330078125,
-  "ma200": 10851.846550292968,
-  "vol20": 0.7198133093393242,
+  "close": 10506.669921875,
+  "ma200": 10875.080849609374,
+  "vol20": 0.7435345167199597,
   "entry_conditions": {
    "sox_gt_ma150": false,
    "ma20_gt_ma150": false,
@@ -109,12 +109,12 @@
   "recent_events": []
  },
  "prices": {
-  "TQQQ": 56.56,
-  "GLDM": 79.75,
-  "DGP": 126.917,
-  "SHNY": 6.97,
-  "SOXL": 56.06
+  "TQQQ": 59.88,
+  "GLDM": 76.6,
+  "DGP": 117.633,
+  "SHNY": 6.71,
+  "SOXL": 65.53
  },
- "price_date": "2026-11-10",
+ "price_date": "2026-11-12",
  "price_source": "yahoo"
 }
