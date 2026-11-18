@@ -1,7 +1,7 @@
 {
  "schema": 1,
- "generated_at": "2026-11-18T07:00:14+09:00",
- "date": "2026-11-17",
+ "generated_at": "2026-11-19T07:00:10+09:00",
+ "date": "2026-11-18",
  "old_hybrid": {
   "ndx_state": 1,
   "ndx_state_name": "防御",
@@ -16,13 +16,13 @@
    },
    {
     "label": "防御中安値からの回復",
-    "value": "+1.6%",
+    "value": "+1.4%",
     "note": "+15%でExit",
     "ok": false
    },
    {
     "label": "防御経過日数",
-    "value": "9日",
+    "value": "10日",
     "note": "25日でタイムアウトExit",
     "ok": true
    }
@@ -36,7 +36,7 @@
    },
    {
     "label": "SMA200からの乖離(参考)",
-    "value": "-13.4%",
+    "value": "-15.5%",
     "note": "",
     "ok": null
    }
@@ -45,28 +45,28 @@
   "gold_weight": 0.0,
   "gold_leverage": 0.0,
   "gold_ticker": null,
-  "date": "2026-11-17"
+  "date": "2026-11-18"
  },
  "new_hybrid": {
   "ndx_vol_state": "ON",
-  "ndx_vol10": 0.43598560802059094,
+  "ndx_vol10": 0.43036172430170844,
   "ndx_momentum_state": "ON",
   "ndx_252r": null,
   "cash_252r": null,
   "ndx_risk_on": true,
   "gold_vol_state": "OFF",
-  "gold_vol20": 0.2779032749780114,
+  "gold_vol20": 0.2868957271231335,
   "ndx_weight": 0.45,
   "gold_weight": 0.0,
-  "last_date": "2026-11-17",
+  "last_date": "2026-11-18",
   "last_momentum_check_date": "2026-10-30"
  },
  "soxl": {
   "strategy_version": "1.4",
   "status": "ok",
   "errors": [],
-  "date": "2026-11-17",
-  "latest_confirmed_session": "2026-11-17",
+  "date": "2026-11-18",
+  "latest_confirmed_session": "2026-11-18",
   "action": "CASH",
   "position": "CASH",
   "model_position": "CASH",
@@ -75,8 +75,8 @@
   "cooldown_days": 5,
   "last_exit_date": "2026-10-19",
   "last_exit_reason": "normal_exit",
-  "earliest_buy_signal_date": "2026-11-18",
-  "earliest_buy_execution_date": "2026-11-19",
+  "earliest_buy_signal_date": "2026-11-19",
+  "earliest_buy_execution_date": "2026-11-20",
   "hold_since": null,
   "hold_days": null,
   "entry_high": null,
@@ -92,29 +92,29 @@
   "entry_signal_date": null,
   "model_entry_date": null,
   "model_entry_soxl_price": null,
-  "overheat": -0.11531715022324769,
+  "overheat": -0.11924682996138125,
   "overheat_warning": false,
   "sox_ret": null,
-  "close": 9642.8779296875,
-  "ma200": 10899.813342285157,
-  "vol20": 0.7578777356933197,
+  "close": 9607.271484375,
+  "ma200": 10908.018059082031,
+  "vol20": 0.7516108502996148,
   "entry_conditions": {
    "sox_gt_ma150": false,
    "ma20_gt_ma150": false,
    "sox_gt_ma50": false,
-   "daily_ret_positive": true,
+   "daily_ret_positive": false,
    "ma200_uptrend": true,
    "vol_low": false
   },
   "recent_events": []
  },
  "prices": {
-  "TQQQ": 51.81,
-  "GLDM": 76.1,
-  "DGP": 115.314,
+  "TQQQ": 51.585,
+  "GLDM": 74.194,
+  "DGP": 109.511,
   "SHNY": 6.71,
-  "SOXL": 49.07
+  "SOXL": 48.179
  },
- "price_date": "2026-11-17",
+ "price_date": "2026-11-18",
  "price_source": "yahoo"
 }
