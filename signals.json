@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "generated_at": "2026-11-26T07:00:10+09:00",
+ "generated_at": "2026-11-27T07:00:11+09:00",
  "date": "2026-11-25",
  "old_hybrid": {
   "ndx_state": 1,
@@ -92,12 +92,12 @@
   "entry_signal_date": null,
   "model_entry_date": null,
   "model_entry_soxl_price": null,
-  "overheat": -0.19758775283623067,
+  "overheat": -0.19758793072206174,
   "overheat_warning": false,
   "sox_ret": null,
-  "close": 8774.8623046875,
-  "ma200": 10935.603657226562,
-  "vol20": 0.976067573742003,
+  "close": 8774.8603515625,
+  "ma200": 10935.603647460937,
+  "vol20": 0.9760675560352252,
   "entry_conditions": {
    "sox_gt_ma150": false,
    "ma20_gt_ma150": false,
